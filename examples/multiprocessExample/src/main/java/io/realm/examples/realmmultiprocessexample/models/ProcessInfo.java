@@ -1,5 +1,5 @@
 /*
- * Copyright 2014 Realm Inc.
+ * Copyright 2017 Realm Inc.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,14 +13,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+package io.realm.examples.realmmultiprocessexample.models;
 
-package io.realm.examples.encryptionexample;
+import java.util.Date;
 
 import io.realm.RealmObject;
+import io.realm.annotations.PrimaryKey;
+import io.realm.annotations.Required;
 
-public class Person extends RealmObject {
+public class ProcessInfo extends RealmObject {
+    @PrimaryKey
     private String name;
-    private int age;
+    private int pid;
+    @Required
+    private Date lastResponseDate;
+
+    public int getPid() {
+        return pid;
+    }
+
+    public void setPid(int pid) {
+        this.pid = pid;
+    }
 
     public String getName() {
         return name;
@@ -30,11 +44,11 @@ public class Person extends RealmObject {
         this.name = name;
     }
 
-    public int getAge() {
-        return age;
+    public Date getLastResponseDate() {
+        return lastResponseDate;
     }
 
-    public void setAge(int age) {
-        this.age = age;
+    public void setLastResponseDate(Date lastResponseDate) {
+        this.lastResponseDate = lastResponseDate;
     }
 }

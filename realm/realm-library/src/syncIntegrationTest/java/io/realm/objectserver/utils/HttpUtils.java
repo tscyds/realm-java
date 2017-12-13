@@ -17,18 +17,12 @@
 package io.realm.objectserver.utils;
 
 import android.os.SystemClock;
-import android.util.Log;
 
 import java.io.IOException;
-import java.net.SocketTimeoutException;
 import java.util.concurrent.TimeUnit;
 
-import io.realm.log.RealmLog;
-import okhttp3.Headers;
-import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.RequestBody;
 import okhttp3.Response;
 
 /**
@@ -40,8 +34,9 @@ import okhttp3.Response;
 public class HttpUtils {
     // TODO If the timeouts are longer than the test timeout you risk getting
     // "Realm could not be deleted errors".
+    // FIXME re-adjust timeout after https://github.com/realm/realm-object-server-private/issues/697 is fixed
     private final static OkHttpClient client = new OkHttpClient.Builder()
-            .retryOnConnectionFailure(true)
+            .connectTimeout(2, TimeUnit.MINUTES)
             .build();
 
     // adb reverse tcp:8888 tcp:8888
@@ -50,6 +45,9 @@ public class HttpUtils {
     private static final String STOP_SERVER = "http://127.0.0.1:8888/stop";
     public static final String TAG = "IntegrationTestServer";
 
+    /**
+     * Start the sync server. If the server has been started before, stop it first.
+     */
     public static void startSyncServer() throws Exception {
         Request request = new Request.Builder()
                 .url(START_SERVER)
@@ -63,6 +61,10 @@ public class HttpUtils {
         SystemClock.sleep(2000);
     }
 
+    /**
+     * Stop the sync server if it is alive. {@link #startSyncServer()} will implicitly stop the server if needed, so
+     * normally there is no need to call this.
+     */
     public static void stopSyncServer() throws Exception {
         Request request = new Request.Builder()
                 .url(STOP_SERVER)
